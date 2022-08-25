@@ -1,18 +1,32 @@
-window.onload = function() {
-    var canvas = document.getElementById("canvas1");
-    var ctx = canvas.getContext("2d");
+let canvas;
+let ctx;
+let FoldField;
+let FoldFieldAnimation;
+
+window.onload = function () {
+    canvas = document.getElementById("canvas1");
+    ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     console.log(canvas);
-    const FoldField = new FoldFieldEffect(ctx, canvas.width, canvas.height);
+    FoldField = new FoldFieldEffect(ctx, canvas.width, canvas.height);
     FoldField.animate();
 }
 
-window.addEventListener("resize", function() {
-    var canvas = document.getElementById("canvas1");
+window.addEventListener("resize", function () {
+    this.cancelAnimationFrame(FoldFieldAnimation);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    FoldField = new FoldFieldEffect(ctx, canvas.width, canvas.height);
+    FoldField.animate();
+
 });
+
+const mouse = {
+    x: 0,
+    y: 0
+}
+
 
 class FoldFieldEffect {
     #ctx;
@@ -25,21 +39,24 @@ class FoldFieldEffect {
         this.#height = height;
         this.x = 0;
         this.y = 0;
+        this.angle = 0;
     }
-    #draw(x,y) {
+    #draw(x, y) {
         const lenght = 200;
         this.#ctx.beginPath();
-        this.#ctx.moveTo(x,y);
+        this.#ctx.moveTo(x, y);
         this.#ctx.lineTo(x + lenght, y + lenght);
         this.#ctx.stroke();
     }
 
+  
     animate() {
-        this.#ctx.clearRect(0, 0, this.#width, this.#height);
+       // this.#ctx.clearRect(0, 0, this.#width, this.#height);
         this.#draw(this.x, this.y);
-        this.x += 5;
-        this.y += 1;
-        console.log('animated');
-        requestAnimationFrame(this.animate.bind(this));
+        this.x += 2 + Math.sin(this.angle) * -10;
+        this.y += 10 + Math.cos(this.angle) * -3;
+        this.angle += 0.5;
+       // console.log('animated');
+        FoldFieldAnimation = requestAnimationFrame(this.animate.bind(this));
     }
 }
